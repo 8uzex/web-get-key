@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uzex Hub - Get your key</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eceef0;--card:#f8f8f8;--line:#dcdfe3;--ink:#16181c;--mute:#6f757d;--accent:#34b9ff;--ok:#1f9d6b;--bad:#d6455a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;padding:18px}
+main{max-width:520px;margin:0 auto;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px}
+.brand{display:flex;align-items:center;gap:14px;padding:16px 20px}
+.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#bfe6ff,#34b9ff);display:grid;place-items:center;font-weight:800;color:#06263d}
+.brand b{display:block;font-size:1.1rem;letter-spacing:-.01em}
+.brand span{color:var(--mute);font-size:.85rem}
+h1{font-size:clamp(2.2rem,11vw,3.2rem);line-height:.98;letter-spacing:-.045em;font-weight:800;margin:0 0 18px}
+h1 span{color:var(--mute)}
+p{margin:0 0 20px;color:var(--mute)}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+button,a.btn{font:inherit;font-weight:700;border-radius:999px;padding:14px 24px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);text-decoration:none;transition:transform .08s}
+button:active{transform:scale(.97)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+button[disabled]{opacity:.55;cursor:not-allowed}
+.small{font-size:.82rem;color:var(--mute);margin:16px 0 0}
+.msg{min-height:1.4em;margin:12px 0 0;font-size:.92rem;color:var(--bad)}
+.msg.ok{color:var(--ok)}
+.stat{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line)}
+.stat:last-child{border-bottom:0}
+.stat span{color:var(--mute);font-weight:500}
+.stat b{font-size:1.5rem;letter-spacing:-.02em}
+h2{font-size:1.5rem;letter-spacing:-.03em;margin:0 0 14px}
+.item{border:1px solid var(--line);border-radius:18px;padding:16px;background:#fff;margin-top:12px}
+.item:first-of-type{margin-top:0}
+.k{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;word-break:break-all;margin-bottom:2px}
+.t{color:var(--mute);font-size:.85rem;margin-bottom:12px}
+.item .btns button{padding:10px 18px;font-size:.9rem}
+.empty{color:var(--mute);margin:0}
+.done{border-color:var(--ok)!important;color:var(--ok)!important}
+@media (prefers-reduced-motion:reduce){button{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <div class="card brand"><div class="logo">U</div><div><b>Uzex Hub Auth</b><span>Free key system</span></div></div>
+
+  <section class="card">
+    <h1 id="title">Get your<br><span>access key.</span></h1>
+    <p id="desc">Press Get key to open the verification link. When it sends you back here, press Generate key once. The key is saved in your Key vault for 24 hours.</p>
+    <div class="btns">
+      <button class="dark" id="main">Get key</button>
+      <button id="vaultBtn">Key vault</button>
+    </div>
+    <p class="msg" id="msg" role="alert"></p>
+    <p class="small" id="note">One-time token, completed link required. Daily limit applies per network.</p>
+  </section>
+
+  <section class="card">
+    <div class="stat"><span>Today</span><b id="today">-</b></div>
+    <div class="stat"><span>Vault keys</span><b id="count">0</b></div>
+    <div class="stat"><span>Key lifetime</span><b id="hours">24h</b></div>
+  </section>
+
+  <section class="card" id="vault">
+    <h2>Key vault</h2>
+    <div id="list"></div>
+  </section>
+</main>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var VAULT='uzex_vault', PENDING='uzex_pending', limit=3;
+  var params=new URLSearchParams(location.search);
+  var onClaim=location.pathname.replace(/\/+$/,'')==='/claim';
+  var token=params.get('t');
+  if(onClaim&&!token){try{token=localStorage.getItem(PENDING)}catch(e){}}
+
+  function load(){try{return(JSON.parse(localStorage.getItem(VAULT)||'[]')||[]).filter(function(k){return k.expires_at>Date.now()/1000})}catch(e){return[]}}
+  function save(v){try{localStorage.setItem(VAULT,JSON.stringify(v))}catch(e){}}
+  function say(t,ok){var m=$('msg');m.textContent=t;m.className='msg'+(ok?' ok':'')}
+  function pad(n){return n<10?'0'+n:''+n}
+  function left(e){var s=Math.max(0,e-Math.floor(Date.now()/1000));return pad(Math.floor(s/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60)}
+  function copy(text){
+    if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(text)}
+    return new Promise(function(ok,no){var t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{document.execCommand('copy')?ok():no()}catch(e){no(e)}document.body.removeChild(t)});
+  }
+  function flash(b,txt){var o=b.textContent;b.textContent=txt;b.classList.add('done');setTimeout(function(){b.textContent=o;b.classList.remove('done')},1400)}
+
+  function render(){
+    var v=load(), list=$('list'); list.innerHTML=''; $('count').textContent=v.length;
+    if(!v.length){var p=document.createElement('p');p.className='empty';p.textContent='No keys yet. Generate one to see it here.';list.appendChild(p);return}
+    v.slice().reverse().forEach(function(d){
+      var it=document.createElement('div');it.className='item';
+      var k=document.createElement('div');k.className='k';k.textContent=d.key;
+      var t=document.createElement('div');t.className='t';t.setAttribute('data-exp',d.expires_at);
+      var r=document.createElement('div');r.className='btns';
+      var a=document.createElement('button');a.textContent='Copy key';
+      var b=document.createElement('button');b.textContent='Copy script';
+      a.onclick=function(){copy(d.key).then(function(){flash(a,'Copied')},function(){flash(a,'Copy failed')})};
+      b.onclick=function(){copy(d.script).then(function(){flash(b,'Copied')},function(){flash(b,'Copy failed')})};
+      r.appendChild(a);r.appendChild(b);it.appendChild(k);it.appendChild(t);it.appendChild(r);list.appendChild(it);
+    });
+    tick();
+  }
+  function tick(){
+    document.querySelectorAll('[data-exp]').forEach(function(e){var x=+e.getAttribute('data-exp');e.textContent=x<=Date.now()/1000?'Expired':'Expires in '+left(x)});
+  }
+  setInterval(tick,1000);
+
+  function status(){
+    fetch('/api/status').then(function(r){return r.json()}).then(function(s){
+      limit=s.limit;$('today').textContent=(s.limit-s.remaining)+'/'+s.limit;$('hours').textContent=s.hours+'h';
+      if(!onClaim&&s.remaining<=0){$('main').disabled=true;say('Daily limit reached. Come back in 24 hours.')}
+    }).catch(function(){});
+  }
+
+  function post(url,body){return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})}).then(function(r){return r.json()})}
+  var reasons={limit:'Daily limit reached. Come back in 24 hours.',no_link:'The verification link is not set up yet. Tell the owner.',shorten_failed:'Could not create the verification link. Try again.',invalid:'This link was already used or is not valid. Press Get key again.',expired:'This link expired. Press Get key again.'};
+
+  var main=$('main');
+  if(onClaim){
+    $('title').innerHTML='Claim your<br><span>access key.</span>';
+    $('desc').textContent='Verification done? Press Generate key once. Your key will be saved to the Key vault below.';
+    main.textContent='Generate key';
+    main.addEventListener('click',function(){
+      if(!token){say('No claim token found. Press Get key on the home page first.');return}
+      main.disabled=true;say('');
+      post('/api/claim',{token:token}).then(function(d){
+        if(!d.ok){
+          if(d.reason==='too_fast'){say('You came back too fast. Finish the verification link, then try again.');main.disabled=false;return}
+          say(reasons[d.reason]||'Something went wrong. Try again.');main.disabled=(d.reason==='limit');return;
+        }
+        var v=load();v.push({key:d.key,expires_at:d.expires_at,script:d.script});save(v);
+        try{localStorage.removeItem(PENDING)}catch(e){}
+        history.replaceState(null,'','/claim');token=null;
+        say('Key generated and saved to your vault.',true);render();status();
+      }).catch(function(){say('Network error. Try again.');main.disabled=false});
+    });
+  }else{
+    main.addEventListener('click',function(){
+      main.disabled=true;say('');
+      post('/api/start').then(function(d){
+        if(!d.ok){say(reasons[d.reason]||'Something went wrong. Try again.');main.disabled=(d.reason==='limit'||d.reason==='no_link');return}
+        try{localStorage.setItem(PENDING,d.token)}catch(e){}
+        location.href=d.link;
+      }).catch(function(){say('Network error. Try again.');main.disabled=false});
+    });
+  }
+  $('vaultBtn').addEventListener('click',function(){$('vault').scrollIntoView({behavior:'smooth'})});
+
+  render();status();
+})();
+</script>
+</body>
+</html>
