@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>UZEXHUB AUTH</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f0f0;
+    --card: #ffffff;
+    --card2: #f5f5f5;
+    --text-primary: #111111;
+    --text-secondary: #888888;
+    --text-muted: #aaaaaa;
+    --accent: #111111;
+    --accent-fg: #ffffff;
+    --border: #e0e0e0;
+    --dot: #aaa;
+    --hero-sub: #999999;
+    --btn-outline-border: #333333;
+    --stat-val: #111111;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161616;
+      --card: #1f1f1f;
+      --card2: #252525;
+      --text-primary: #f0f0f0;
+      --text-secondary: #888888;
+      --text-muted: #555555;
+      --accent: #f0f0f0;
+      --accent-fg: #111111;
+      --border: #2e2e2e;
+      --dot: #555;
+      --hero-sub: #666666;
+      --btn-outline-border: #888;
+      --stat-val: #f0f0f0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161616;
+    --card: #1f1f1f;
+    --card2: #252525;
+    --text-primary: #f0f0f0;
+    --text-secondary: #888888;
+    --text-muted: #555555;
+    --accent: #f0f0f0;
+    --accent-fg: #111111;
+    --border: #2e2e2e;
+    --dot: #555;
+    --hero-sub: #666666;
+    --btn-outline-border: #888;
+    --stat-val: #f0f0f0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 16px;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  }
+
+  .page {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* HEADER CARD */
+  .header-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .logo-wrap svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-text h1 {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .header-text p {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+
+  /* GATEWAY CARD */
+  .gateway-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .eyebrow-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--dot);
+    flex-shrink: 0;
+  }
+
+  .eyebrow span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .hero-headline {
+    line-height: 0.95;
+    margin-bottom: 18px;
+  }
+
+  .hero-headline .line1 {
+    display: block;
+    font-size: clamp(40px, 11vw, 52px);
+    font-weight: 900;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .hero-headline .line2 {
+    display: block;
+    font-size: clamp(40px, 11vw, 52px);
+    font-weight: 900;
+    color: var(--hero-sub);
+    letter-spacing: -0.02em;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    max-width: 380px;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-fg);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.8; }
+  .btn-primary:active { opacity: 0.6; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1.5px solid var(--btn-outline-border);
+    border-radius: 10px;
+    padding: 14px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-outline:hover { background: var(--card2); }
+
+  .fine-print {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* STATS CARD */
+  .stats-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 0 24px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-row:last-child { border-bottom: none; }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--stat-val);
+    letter-spacing: -0.02em;
+  }
+
+  .stat-value.mono {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* VAULT CARD */
+  .vault-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px;
+  }
+
+  .vault-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+
+  .vault-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+  }
+
+  .btn-refresh {
+    background: transparent;
+    border: none;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .btn-refresh:hover { color: var(--text-primary); }
+
+  .vault-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .vault-empty {
+    text-align: center;
+    padding: 32px 0;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .vault-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .vault-item {
+    background: var(--card2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .vault-key-text {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: var(--text-primary);
+    letter-spacing: 0.05em;
+  }
+
+  .vault-key-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  .vault-copy-btn {
+    background: var(--accent);
+    color: var(--accent-fg);
+    border: none;
+    border-radius: 7px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .vault-copy-btn:hover { opacity: 0.8; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text-primary);
+    color: var(--accent-fg);
+    padding: 12px 22px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 100;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .modal-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    padding: 28px 24px 32px;
+    width: 100%;
+    max-width: 480px;
+    transform: translateY(40px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.show .modal {
+    transform: translateY(0);
+  }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .modal-key-display {
+    background: var(--card2);
+    border-radius: 12px;
+    padding: 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 20px;
+    word-break: break-all;
+  }
+  .modal-btn-row {
+    display: flex;
+    gap: 10px;
+  }
+  .modal-btn-row .btn-primary {
+    flex: 1;
+  }
+  .modal-btn-row .btn-outline {
+    flex: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <div class="logo-wrap">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- owl-like icon similar to the screenshot -->
+        <circle cx="18" cy="18" r="17" fill="#1e3a8a"/>
+        <circle cx="13" cy="16" r="4" fill="white" opacity="0.9"/>
+        <circle cx="23" cy="16" r="4" fill="white" opacity="0.9"/>
+        <circle cx="13" cy="16" r="2" fill="#1e3a8a"/>
+        <circle cx="23" cy="16" r="2" fill="#1e3a8a"/>
+        <path d="M13 22 Q18 26 23 22" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+        <path d="M8 10 L11 14" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+        <path d="M28 10 L25 14" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>UZEXHUB AUTH</h1>
+      <p>Direct Claim · Supabase</p>
+    </div>
+  </div>
+
+  <!-- GATEWAY -->
+  <div class="gateway-card">
+    <div class="eyebrow">
+      <div class="eyebrow-dot"></div>
+      <span>Access Gateway</span>
+    </div>
+    <div class="hero-headline">
+      <span class="line1">GET YOUR</span>
+      <span class="line2">ACCESS KEY.</span>
+    </div>
+    <p class="hero-desc">
+      Press GET KEY to create a fresh LinkFree short link. After LinkFree returns to /uzexhub/claim-key, press GENERATE KEY once. The generated key is saved to your browser's KEY VAULT for 24 hours.
+    </p>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="handleGetKey()">Get Key</button>
+      <button class="btn-outline" onclick="scrollToVault()">Key Vault</button>
+    </div>
+    <p class="fine-print">
+      LinkFree required · one-time callback token · Cloudflare bot check when available.<br>
+      Daily generation limit: 3. Current remaining: <span id="remaining-inline">3</span>.
+    </p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-card">
+    <div class="stat-row">
+      <span class="stat-label">Today</span>
+      <span class="stat-value" id="stat-today">0/3</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Vault Keys</span>
+      <span class="stat-value" id="stat-vault">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Format</span>
+      <span class="stat-value mono">UZEX-12-12</span>
+    </div>
+  </div>
+
+  <!-- KEY VAULT -->
+  <div class="vault-card" id="vault-section">
+    <div class="vault-header">
+      <span class="vault-title">KEY VAULT</span>
+      <button class="btn-refresh" onclick="refreshVault()">Refresh</button>
+    </div>
+    <p class="vault-sub">Only keys recorded to this browser identity appear here.</p>
+    <div id="vault-list" class="vault-list">
+      <div class="vault-empty">No keys in vault</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="key-modal">
+  <div class="modal">
+    <div class="modal-title">Key Generated</div>
+    <p class="modal-sub">Your access key has been created and saved to the vault. It expires in 24 hours.</p>
+    <div class="modal-key-display" id="modal-key-text">UZEX-XXXX-XXXX-XXXX</div>
+    <div class="modal-btn-row">
+      <button class="btn-primary" onclick="copyModalKey()">Copy Key</button>
+      <button class="btn-outline" onclick="closeModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'uzexhub_vault';
+  const DAILY_KEY   = 'uzexhub_daily';
+  const LIMIT       = 3;
+  let currentKey    = '';
+
+  // ─── Vault helpers ──────────────────────────────────────────────
+  function loadVault() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const all = raw ? JSON.parse(raw) : [];
+      const now = Date.now();
+      return all.filter(k => k.expires > now);
+    } catch { return []; }
+  }
+
+  function saveVault(vault) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(vault)); } catch {}
+  }
+
+  function loadDaily() {
+    try {
+      const raw = localStorage.getItem(DAILY_KEY);
+      const d   = raw ? JSON.parse(raw) : null;
+      const today = new Date().toDateString();
+      if (!d || d.date !== today) return { date: today, count: 0 };
+      return d;
+    } catch { return { date: new Date().toDateString(), count: 0 }; }
+  }
+
+  function saveDaily(d) {
+    try { localStorage.setItem(DAILY_KEY, JSON.stringify(d)); } catch {}
+  }
+
+  // ─── Keygen ──────────────────────────────────────────────────────
+  function genKey() {
+    const seg = () => Math.random().toString(36).substring(2, 6).toUpperCase().replace(/[^A-Z0-9]/g, 'X').padEnd(4,'X');
+    return `UZEX-${seg()}-${seg()}-${seg()}`;
+  }
+
+  // ─── UI update ───────────────────────────────────────────────────
+  function updateUI() {
+    const vault = loadVault();
+    const daily = loadDaily();
+    const used  = daily.count;
+    const rem   = Math.max(0, LIMIT - used);
+
+    document.getElementById('stat-today').textContent  = `${used}/${LIMIT}`;
+    document.getElementById('stat-vault').textContent  = vault.length;
+    document.getElementById('remaining-inline').textContent = rem;
+
+    const list = document.getElementById('vault-list');
+    if (vault.length === 0) {
+      list.innerHTML = '<div class="vault-empty">No keys in vault</div>';
+      return;
+    }
+
+    list.innerHTML = vault.map(k => {
+      const expiresIn = Math.round((k.expires - Date.now()) / 1000 / 60 / 60);
+      return `
+        <div class="vault-item">
+          <div>
+            <div class="vault-key-text">${k.key}</div>
+            <div class="vault-key-meta">Expires in ~${expiresIn}h</div>
+          </div>
+          <button class="vault-copy-btn" onclick="copyKey('${k.key}')">Copy</button>
+        </div>`;
+    }).join('');
+  }
+
+  // ─── Actions ─────────────────────────────────────────────────────
+  function handleGetKey() {
+    const daily = loadDaily();
+    if (daily.count >= LIMIT) {
+      toast('Daily limit reached.');
+      return;
+    }
+
+    // simulate LinkFree flow — generate immediately
+    const key     = genKey();
+    const expires = Date.now() + 24 * 60 * 60 * 1000;
+
+    const vault = loadVault();
+    vault.unshift({ key, expires, created: Date.now() });
+    saveVault(vault);
+
+    daily.count++;
+    saveDaily(daily);
+
+    currentKey = key;
+    document.getElementById('modal-key-text').textContent = key;
+    document.getElementById('key-modal').classList.add('show');
+    updateUI();
+  }
+
+  function scrollToVault() {
+    document.getElementById('vault-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function refreshVault() {
+    updateUI();
+    toast('Vault refreshed.');
+  }
+
+  function copyKey(key) {
+    navigator.clipboard.writeText(key).then(() => toast('Key copied.')).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = key; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      toast('Key copied.');
+    });
+  }
+
+  function copyModalKey() {
+    copyKey(currentKey);
+  }
+
+  function closeModal() {
+    document.getElementById('key-modal').classList.remove('show');
+  }
+
+  // close modal on overlay click
+  document.getElementById('key-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ─── Toast ───────────────────────────────────────────────────────
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  // ─── Init ────────────────────────────────────────────────────────
+  updateUI();
+</script>
+</body>
+</html>
